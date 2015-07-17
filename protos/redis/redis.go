@@ -250,6 +250,7 @@ type Redis struct {
 	Ports         []int
 	Send_request  bool
 	Send_response bool
+	Send_redis bool
 
 	transactionsMap map[common.HashableTcpTuple]*RedisTransaction
 
@@ -259,6 +260,7 @@ type Redis struct {
 func (redis *Redis) InitDefaults() {
 	redis.Send_request = false
 	redis.Send_response = false
+	redis.Send_redis = false
 }
 
 func (redis *Redis) setFromConfig(config config.Redis) error {
@@ -270,6 +272,9 @@ func (redis *Redis) setFromConfig(config config.Redis) error {
 	}
 	if config.Send_response != nil {
 		redis.Send_response = *config.Send_response
+	}
+        if config.Send_redis != nil {
+		redis.Send_redis = *config.Send_redis
 	}
 	return nil
 }
@@ -719,7 +724,9 @@ func (redis *Redis) publishTransaction(t *RedisTransaction) {
 	if redis.Send_response {
 		event["response"] = t.Response_raw
 	}
+        if redis.Send_redis {
 	event["redis"] = common.MapStr(t.Redis)
+	}
 	event["method"] = strings.ToUpper(t.Method)
 	event["resource"] = t.Path
 	event["query"] = t.Query

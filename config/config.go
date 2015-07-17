@@ -101,6 +101,7 @@ type Redis struct {
 	Ports         []int
 	Send_request  *bool
 	Send_response *bool
+	Send_redis *bool
 }
 
 // Config Singleton
